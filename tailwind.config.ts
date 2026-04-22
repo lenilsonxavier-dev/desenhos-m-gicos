@@ -13,6 +13,10 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        display: ['Bubblegum Sans', 'cursive'],
+        body: ['Nunito', 'sans-serif'],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -57,6 +61,10 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+      },
+      boxShadow: {
+        playful: '0 8px 30px -8px hsl(25 95% 60% / 0.25)',
+        card: '0 4px 20px -4px hsl(30 20% 20% / 0.08)',
       },
       borderRadius: {
         lg: "var(--radius)",
