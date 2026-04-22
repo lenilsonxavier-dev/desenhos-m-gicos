@@ -4,7 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { Sparkles, Download, Loader2, Pencil } from "lucide-react";
+import { FileImage, FileText } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import jsPDF from "jspdf";
 
 const suggestions = [
   "🦄 Unicórnio",
@@ -58,6 +60,28 @@ export function ColoringGenerator() {
     link.href = imageUrl;
     link.download = `colorir-${Date.now()}.png`;
     link.click();
+  };
+
+  const downloadPdf = async () => {
+    if (!imageUrl) return;
+    try {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.src = imageUrl;
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+      });
+      const pdf = new jsPDF({
+        orientation: img.width > img.height ? "landscape" : "portrait",
+        unit: "px",
+        format: [img.width, img.height],
+      });
+      pdf.addImage(img, "PNG", 0, 0, img.width, img.height);
+      pdf.save(`colorir-${Date.now()}.pdf`);
+    } catch {
+      toast({ title: "Erro ao gerar PDF 😢", variant: "destructive" });
+    }
   };
 
   return (
@@ -139,15 +163,26 @@ export function ColoringGenerator() {
             />
           </div>
           <div className="flex justify-center">
-            <Button
-              onClick={downloadImage}
-              variant="outline"
-              size="lg"
-              className="font-display text-lg gap-2"
-            >
-              <Download className="w-5 h-5" />
-              Baixar Desenho
-            </Button>
+            <div className="flex gap-3">
+              <Button
+                onClick={downloadImage}
+                variant="outline"
+                size="lg"
+                className="font-display text-lg gap-2"
+              >
+                <FileImage className="w-5 h-5" />
+                Baixar PNG
+              </Button>
+              <Button
+                onClick={downloadPdf}
+                variant="outline"
+                size="lg"
+                className="font-display text-lg gap-2"
+              >
+                <FileText className="w-5 h-5" />
+                Baixar PDF
+              </Button>
+            </div>
           </div>
         </div>
       )}
