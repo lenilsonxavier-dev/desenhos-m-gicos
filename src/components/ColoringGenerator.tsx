@@ -1,4 +1,5 @@
 import { useState } from "react";
+import candinhoImg from "@/assets/candinho.jpg";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
@@ -63,8 +64,8 @@ export function ColoringGenerator() {
     <div className="flex flex-col items-center w-full max-w-2xl mx-auto px-4 gap-8">
       {/* Title */}
       <div className="text-center space-y-2">
+        <img src={candinhoImg} alt="Candinho" className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover shadow-card border-4 border-primary" />
         <h1 className="text-4xl md:text-5xl font-display text-foreground flex items-center justify-center gap-3">
-          <Pencil className="w-10 h-10 text-primary" />
           CANDINHO DESENHISTA
         </h1>
         <p className="text-muted-foreground text-lg font-body">
