@@ -65,10 +65,10 @@ export function ColoringGenerator() {
       <div className="text-center space-y-2">
         <h1 className="text-4xl md:text-5xl font-display text-foreground flex items-center justify-center gap-3">
           <Pencil className="w-10 h-10 text-primary" />
-          Colorir com IA
+          CANDINHO DESENHISTA
         </h1>
         <p className="text-muted-foreground text-lg font-body">
-          Diga o que quer desenhar e a mágica acontece! ✨
+          Diga o desenho que você quer  e eu faço! ✨
         </p>
       </div>
 
