@@ -64,9 +64,9 @@ export function ColoringGenerator() {
     <div className="flex flex-col items-center w-full max-w-2xl mx-auto px-4 gap-8">
       {/* Title */}
       <div className="text-center space-y-2">
-        <h1 className="text-4xl md:text-5xl font-display text-foreground flex items-center justify-center gap-3">
+        <h1 className="text-2xl sm:text-4xl md:text-5xl font-display text-foreground flex items-center justify-center gap-2 sm:gap-3 flex-nowrap">
           CANDINHO DESENHISTA
-          <img src={candinhoImg} alt="Candinho" className="w-16 h-16 md:w-20 md:h-20 rounded-full object-cover shadow-card border-4 border-primary" />
+          <img src={candinhoImg} alt="Candinho" className="w-10 h-10 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full object-cover shadow-card border-2 sm:border-4 border-primary shrink-0" />
         </h1>
         <p className="text-muted-foreground text-lg font-body">
           Diga o desenho que você quer  e eu faço! ✨
