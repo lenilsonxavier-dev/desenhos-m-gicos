@@ -1,12 +1,14 @@
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import candinhoImg from "@/assets/candinho.jpg";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
-import { Sparkles, Download, Loader2, Pencil } from "lucide-react";
+import { Sparkles, Loader2, Palette, LogIn, LogOut, Image as ImageIcon } from "lucide-react";
 import { FileImage, FileText } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import jsPDF from "jspdf";
+import { useAuth } from "@/hooks/useAuth";
 
 const suggestions = [
   "🦄 Unicórnio",
@@ -23,6 +25,8 @@ export function ColoringGenerator() {
   const [prompt, setPrompt] = useState("");
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
 
   const generate = async (text?: string) => {
     const input = text || prompt;
@@ -86,6 +90,28 @@ export function ColoringGenerator() {
 
   return (
     <div className="flex flex-col items-center w-full max-w-2xl mx-auto px-4 gap-8">
+      {/* Top bar */}
+      <div className="w-full flex justify-end gap-2 -mb-4">
+        {user ? (
+          <>
+            <Link to="/galeria">
+              <Button variant="outline" size="sm" className="font-body">
+                <ImageIcon className="w-4 h-4" /> Galeria
+              </Button>
+            </Link>
+            <Button variant="ghost" size="sm" onClick={signOut} className="font-body">
+              <LogOut className="w-4 h-4" /> Sair
+            </Button>
+          </>
+        ) : (
+          <Link to="/auth">
+            <Button variant="outline" size="sm" className="font-body">
+              <LogIn className="w-4 h-4" /> Entrar
+            </Button>
+          </Link>
+        )}
+      </div>
+
       {/* Title */}
       <div className="text-center space-y-2">
         <h1 className="text-2xl sm:text-4xl md:text-5xl font-display text-foreground flex items-center justify-center gap-2 sm:gap-3 flex-nowrap">
@@ -163,7 +189,15 @@ export function ColoringGenerator() {
             />
           </div>
           <div className="flex justify-center">
-            <div className="flex gap-3">
+            <div className="flex gap-3 flex-wrap justify-center">
+              <Button
+                onClick={() => navigate("/colorir", { state: { imageUrl } })}
+                size="lg"
+                className="font-display text-lg gap-2 shadow-playful"
+              >
+                <Palette className="w-5 h-5" />
+                Colorir Online
+              </Button>
               <Button
                 onClick={downloadImage}
                 variant="outline"
