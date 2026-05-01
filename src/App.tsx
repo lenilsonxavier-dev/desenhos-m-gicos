@@ -9,6 +9,7 @@ import Auth from "./pages/Auth.tsx";
 import Color from "./pages/Color.tsx";
 import Gallery from "./pages/Gallery.tsx";
 import { AuthProvider } from "@/hooks/useAuth";
+import { PasswordGate } from "@/components/PasswordGate";
 
 const queryClient = new QueryClient();
 
@@ -19,14 +20,16 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
-          <Routes>
+          <PasswordGate>
+            <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/colorir" element={<Color />} />
             <Route path="/galeria" element={<Gallery />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
-          </Routes>
+            </Routes>
+          </PasswordGate>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
