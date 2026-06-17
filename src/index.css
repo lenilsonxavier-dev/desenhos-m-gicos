@@ -2,10 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Nunito:wght@400;600;700;800&display=swap');
+/* ⚠️ REMOVIDO: chamada externa ao Google Fonts */
+/* @import url('https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Nunito:wght@400;600;700;800&display=swap'); */
 
 @layer base {
   :root {
+    /* 🆕 NOVO: variáveis locais para as fontes (sem API) */
+    --font-body: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-display: 'Bubblegum Sans', cursive, 'Comic Sans MS', 'Chalkboard SE', cursive;
+
+    /* 🔽 TODAS as suas variáveis originais foram mantidas intactas */
     --background: 43 100% 96%;
     --foreground: 30 20% 20%;
     --card: 0 0% 100%;
@@ -42,6 +48,12 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground font-body;
+    @apply bg-background text-foreground;
+    font-family: var(--font-body); /* 🆕 agora usa a variável local */
+  }
+
+  /* 🆕 garante que títulos e elementos com estilo mágico usem a fonte display */
+  h1, h2, h3, .font-display, .magic-text {
+    font-family: var(--font-display);
   }
 }
