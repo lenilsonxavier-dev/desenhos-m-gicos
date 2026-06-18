@@ -27,7 +27,6 @@ export function ColoringGenerator() {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
 
-  // 🤖 CONEXÃO COM O HUGGING FACE
   const generate = async (text?: string) => {
     const input = text || prompt;
     if (!input.trim()) {
@@ -39,34 +38,22 @@ export function ColoringGenerator() {
     setImageUrl(null);
 
     try {
-     // 🔒 Agora o código fica protegido e o GitHub não barra!
-const HUGGING_FACE_TOKEN = import.meta.env.VITE_HUGGING_FACE_TOKEN;
-      
-     // Mude disso:
-const MODEL_URL = "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell";
-
-// Para isso (formato universal da API):
-const MODEL_URL = "https://api-process.huggingface.co/models/black-forest-labs/FLUX.1-schnell";
-// OU simplificado se a rede estiver instável:
-// const MODEL_URL = "https://api-inference.huggingface.co/pipeline/text-to-image";
-
-      // Engenharia de prompt automática para garantir que saia em preto e branco para as crianças
+      // Engenharia de prompt para garantir traços ideais para colorir
       const promptFormatado = `coloring page for kids, clean black and white outline art, vector style, white background, no gradients, no shading, simple lines, ${input}`;
 
-      const response = await fetch(MODEL_URL, {
+      // 🚀 Chamada segura para a sua API interna na Vercel (evita bloqueio de DNS escolar)
+      const response = await fetch("/api/generate", {
+        method: "POST",
         headers: {
-          Authorization: `Bearer ${HUGGING_FACE_TOKEN}`,
           "Content-Type": "application/json",
         },
-        method: "POST",
-        body: JSON.stringify({ inputs: promptFormatado }),
+        body: JSON.stringify({ prompt: promptFormatado }),
       });
 
       if (!response.ok) {
-        throw new Error("O servidor do Hugging Face está processando ou sobrecarregado. Tente novamente em alguns segundos!");
+        throw new Error("O servidor está processando ou a fila está cheia. Tente novamente em instantes!");
       }
 
-      // Transforma a resposta binária da imagem em uma URL legível para a tag <img>
       const blob = await response.blob();
       const localUrl = URL.createObjectURL(blob);
       
@@ -151,7 +138,7 @@ const MODEL_URL = "https://api-process.huggingface.co/models/black-forest-labs/F
       <div className="w-full space-y-4">
         <div className="flex gap-3">
           <Input
-            placeholder="Ex: um dinossauro tocando violão 🎸"
+            placeholder="Ex: um dinossauro de patins 🦖"
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && generate()}
