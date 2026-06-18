@@ -20,16 +20,15 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
-          <PasswordGate>
-            <Routes>
+          {/* 🚀 REMOVIDO O PASSWORDGATE DAQUI PARA ACESSO DIRETO */}
+          <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/colorir" element={<Color />} />
             <Route path="/galeria" element={<Gallery />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
-            </Routes>
-          </PasswordGate>
+          </Routes>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
