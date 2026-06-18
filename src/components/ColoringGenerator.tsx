@@ -42,8 +42,13 @@ export function ColoringGenerator() {
      // 🔒 Agora o código fica protegido e o GitHub não barra!
 const HUGGING_FACE_TOKEN = import.meta.env.VITE_HUGGING_FACE_TOKEN;
       
-      // Modelo excelente e super leve para desenhos de contorno e páginas de colorir
-      const MODEL_URL = "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell";
+     // Mude disso:
+const MODEL_URL = "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell";
+
+// Para isso (formato universal da API):
+const MODEL_URL = "https://api-process.huggingface.co/models/black-forest-labs/FLUX.1-schnell";
+// OU simplificado se a rede estiver instável:
+// const MODEL_URL = "https://api-inference.huggingface.co/pipeline/text-to-image";
 
       // Engenharia de prompt automática para garantir que saia em preto e branco para as crianças
       const promptFormatado = `coloring page for kids, clean black and white outline art, vector style, white background, no gradients, no shading, simple lines, ${input}`;
