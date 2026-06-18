@@ -13,12 +13,10 @@ export default {
       },
     },
     extend: {
-      fontFamily: {
-        display: ['Bubblegum Sans', 'cursive'],
-        body: ['Nunito', 'sans-serif'],
+       fontFamily: {
+        display: ['var(--font-display)', 'cursive', 'Comic Sans MS', 'sans-serif'],
+        sans: ['var(--font-body)', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
       },
-      colors: {
-        border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
