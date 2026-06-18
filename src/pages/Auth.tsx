@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
-import { Loader2, Sparkles } from "lucide-react"; // 🆕 Adicionado Sparkles para o botão mágico
+import { Loader2 } from "lucide-react";
 import candinhoImg from "@/assets/candinho.jpg";
 
 export default function Auth() {
@@ -17,35 +17,14 @@ export default function Auth() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
-  const [guestLoading, setGuestLoading] = useState(false); // 🆕 Estado para o clique rápido
 
   useEffect(() => {
     if (user) navigate("/", { replace: true });
   }, [user, navigate]);
 
-  // 🆕 FUNÇÃO MÁGICA: Entrar sem senha criando uma sessão anônima ou simulada instantânea
-  const entrarComoConvidado = async () => {
-    setGuestLoading(true);
-    try {
-      // Usa o recurso nativo de login anônimo do Supabase (se ativo)
-      // Se não estiver ativo, ele simplesmente força a navegação para o painel principal
-      const { data, error } = await supabase.auth.signInAnonymously();
-      
-      if (error) {
-        // Fallback: Se o anonimato do Supabase estiver desligado no painel, 
-        // levamos o aluno direto para a rota principal de desenho
-        console.log("Modo local/escola ativado");
-        navigate("/", { replace: true });
-        return;
-      }
-      
-      toast({ title: "Bem-vindo(a)! 🎨", description: "Vamos desenhar!" });
-    } catch (err) {
-      // Garante que o aluno vai entrar de qualquer forma
-      navigate("/", { replace: true });
-    } finally {
-      setGuestLoading(false);
-    }
+  const entrarComoConvidado = () => {
+    toast({ title: "Modo Aluno Ativado! 🎨", description: "Vamos desenhar!" });
+    navigate("/", { replace: true });
   };
 
   const submit = async (e: React.FormEvent) => {
@@ -67,8 +46,9 @@ export default function Auth() {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
       }
-    } catch (err: any) {
-      toast({ title: "Ops!", description: err.message, variant: "destructive" });
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Erro desconhecido";
+      toast({ title: "Ops!", description: errorMessage, variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -85,16 +65,13 @@ export default function Auth() {
           </p>
         </div>
 
-        {/* 🆕 BOTÃO DE ACESSO RÁPIDO PARA OS ALUNOS */}
         <div className="pb-2 border-b border-dashed border-border">
           <Button 
             type="button" 
             variant="secondary"
-            disabled={guestLoading}
             onClick={entrarComoConvidado}
-            className="w-full h-12 font-display text-lg bg-secondary text-white hover:bg-secondary/90 shadow-playful flex items-center justify-center gap-2"
+            className="w-full h-12 font-display text-lg bg-secondary text-white hover:bg-secondary/90 shadow-playful"
           >
-            {guestLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Sparkles className="w-5 h-5" />}
             Entrar como Aluno (Sem Senha) 🚀
           </Button>
         </div>
