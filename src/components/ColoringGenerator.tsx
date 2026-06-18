@@ -9,19 +9,6 @@ import { toast } from "@/hooks/use-toast";
 import jsPDF from "jspdf";
 import { useAuth } from "@/hooks/useAuth";
 
-// 🌍 BANCO DE IMAGENS ECOLÓGICO (MOLDURAS LOCAIS)
-const MOLDURAS_LOCAIS: Record<string, string> = {
-  "unicórnio": "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?q=80&w=1000&auto=format&fit=crop", 
-  "dragão bebê": "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1000&auto=format&fit=crop",
-  "castelo mágico": "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1000&auto=format&fit=crop",
-  "borboleta": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1000&auto=format&fit=crop",
-  "foguete no espaço": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop",
-  "gatinho fofo": "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=1000&auto=format&fit=crop",
-  "arco-íris": "https://images.unsplash.com/photo-1464802686167-b939a6910659?q=80&w=1000&auto=format&fit=crop",
-  "sereia": "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=1000&auto=format&fit=crop",
-  "padrão": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop" 
-};
-
 const suggestions = [
   "🦄 Unicórnio",
   "🐉 Dragão bebê",
@@ -40,6 +27,7 @@ export function ColoringGenerator() {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
 
+  // 🤖 CONEXÃO COM O HUGGING FACE
   const generate = async (text?: string) => {
     const input = text || prompt;
     if (!input.trim()) {
@@ -50,22 +38,44 @@ export function ColoringGenerator() {
     setLoading(true);
     setImageUrl(null);
 
-    // Simulação lúdica do processo de desenho para encantar as crianças
-    setTimeout(() => {
-      const busca = input.toLowerCase();
-      let chaveEncontrada = "padrão";
+    try {
+     // 🔒 Agora o código fica protegido e o GitHub não barra!
+const HUGGING_FACE_TOKEN = import.meta.env.VITE_HUGGING_FACE_TOKEN;
       
-      for (const chave of Object.keys(MOLDURAS_LOCAIS)) {
-        if (busca.includes(chave)) {
-          chaveEncontrada = chave;
-          break;
-        }
+      // Modelo excelente e super leve para desenhos de contorno e páginas de colorir
+      const MODEL_URL = "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell";
+
+      // Engenharia de prompt automática para garantir que saia em preto e branco para as crianças
+      const promptFormatado = `coloring page for kids, clean black and white outline art, vector style, white background, no gradients, no shading, simple lines, ${input}`;
+
+      const response = await fetch(MODEL_URL, {
+        headers: {
+          Authorization: `Bearer ${HUGGING_FACE_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        body: JSON.stringify({ inputs: promptFormatado }),
+      });
+
+      if (!response.ok) {
+        throw new Error("O servidor do Hugging Face está processando ou sobrecarregado. Tente novamente em alguns segundos!");
       }
 
-      setImageUrl(MOLDURAS_LOCAIS[chaveEncontrada]);
+      // Transforma a resposta binária da imagem em uma URL legível para a tag <img>
+      const blob = await response.blob();
+      const localUrl = URL.createObjectURL(blob);
+      
+      setImageUrl(localUrl);
+      toast({ title: "O Pincel Mágico do Candinho criou seu desenho! 🎉" });
+    } catch (e: any) {
+      toast({
+        title: "Ops! O Candinho se atrapalhou um pouco 😢",
+        description: e.message || "Tente clicar em Criar novamente.",
+        variant: "destructive",
+      });
+    } finally {
       setLoading(false);
-      toast({ title: "Desenho gerado com sucesso! 🎉" });
-    }, 1200);
+    }
   };
 
   const downloadImage = () => {
@@ -80,7 +90,6 @@ export function ColoringGenerator() {
     if (!imageUrl) return;
     try {
       const img = new Image();
-      img.crossOrigin = "anonymous";
       img.src = imageUrl;
       await new Promise((resolve, reject) => {
         img.onload = resolve;
@@ -137,7 +146,7 @@ export function ColoringGenerator() {
       <div className="w-full space-y-4">
         <div className="flex gap-3">
           <Input
-            placeholder="Ex: um gatinho fofo 🐱"
+            placeholder="Ex: um dinossauro tocando violão 🎸"
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && generate()}
@@ -185,19 +194,19 @@ export function ColoringGenerator() {
             <div className="w-20 h-20 rounded-full border-4 border-muted border-t-primary animate-spin" />
           </div>
           <p className="text-muted-foreground font-body text-lg animate-pulse">
-            Desenhando... 🎨
+            O Pincel Mágico está desenhando... 🎨
           </p>
         </div>
       )}
 
-      {/* Resultado da Imagem Gerada */}
+      {/* Exibição do Desenho Gerado */}
       {imageUrl && !loading && (
         <div className="w-full space-y-4 animate-in fade-in-0 slide-in-from-bottom-4 duration-500">
           <div className="bg-card rounded-2xl shadow-card p-4 border border-border">
             <img
               src={imageUrl}
               alt="Desenho para colorir"
-              className="w-full rounded-xl max-h-[400px] object-contain mx-auto"
+              className="w-full rounded-xl max-h-[500px] object-contain mx-auto bg-white"
             />
           </div>
           <div className="flex justify-center">
