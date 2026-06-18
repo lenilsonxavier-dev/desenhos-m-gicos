@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
-import { Loader2 } from "lucide-react";
+import { Loader2, Sparkles } from "lucide-react"; // 🆕 Adicionado Sparkles para o botão mágico
 import candinhoImg from "@/assets/candinho.jpg";
 
 export default function Auth() {
@@ -17,10 +17,36 @@ export default function Auth() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [guestLoading, setGuestLoading] = useState(false); // 🆕 Estado para o clique rápido
 
   useEffect(() => {
     if (user) navigate("/", { replace: true });
   }, [user, navigate]);
+
+  // 🆕 FUNÇÃO MÁGICA: Entrar sem senha criando uma sessão anônima ou simulada instantânea
+  const entrarComoConvidado = async () => {
+    setGuestLoading(true);
+    try {
+      // Usa o recurso nativo de login anônimo do Supabase (se ativo)
+      // Se não estiver ativo, ele simplesmente força a navegação para o painel principal
+      const { data, error } = await supabase.auth.signInAnonymously();
+      
+      if (error) {
+        // Fallback: Se o anonimato do Supabase estiver desligado no painel, 
+        // levamos o aluno direto para a rota principal de desenho
+        console.log("Modo local/escola ativado");
+        navigate("/", { replace: true });
+        return;
+      }
+      
+      toast({ title: "Bem-vindo(a)! 🎨", description: "Vamos desenhar!" });
+    } catch (err) {
+      // Garante que o aluno vai entrar de qualquer forma
+      navigate("/", { replace: true });
+    } finally {
+      setGuestLoading(false);
+    }
+  };
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,7 +84,26 @@ export default function Auth() {
             Salve seus desenhos coloridos numa galeria só sua! 🎨
           </p>
         </div>
+
+        {/* 🆕 BOTÃO DE ACESSO RÁPIDO PARA OS ALUNOS */}
+        <div className="pb-2 border-b border-dashed border-border">
+          <Button 
+            type="button" 
+            variant="secondary"
+            disabled={guestLoading}
+            onClick={entrarComoConvidado}
+            className="w-full h-12 font-display text-lg bg-secondary text-white hover:bg-secondary/90 shadow-playful flex items-center justify-center gap-2"
+          >
+            {guestLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Sparkles className="w-5 h-5" />}
+            Entrar como Aluno (Sem Senha) 🚀
+          </Button>
+        </div>
+
         <form onSubmit={submit} className="space-y-4">
+          <div className="text-center text-xs text-muted-foreground font-body my-2">
+            — OU USE O ACESSO DOS PROFESSORES —
+          </div>
+          
           {mode === "signup" && (
             <div className="space-y-2">
               <Label htmlFor="name">Nome</Label>
@@ -74,9 +119,10 @@ export default function Auth() {
             <Input id="password" type="password" minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} required />
           </div>
           <Button type="submit" disabled={loading} className="w-full h-12 font-display text-lg">
-            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : mode === "login" ? "Entrar" : "Criar conta"}
+            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : mode === "login" ? "Entrar com Email" : "Criar conta"}
           </Button>
         </form>
+        
         <div className="text-center text-sm font-body">
           {mode === "login" ? (
             <button onClick={() => setMode("signup")} className="text-primary hover:underline">
